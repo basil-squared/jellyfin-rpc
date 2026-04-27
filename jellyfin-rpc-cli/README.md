@@ -1,10 +1,10 @@
 # Jellyfin-RPC
-[![License](https://shields.io/github/license/radiicall/jellyfin-rpc?color=purple)](https://www.gnu.org/licenses/gpl-3.0-standalone.html)
+[![License](https://shields.io/github/license/JustRadical/jellyfin-rpc?color=purple)](https://www.gnu.org/licenses/gpl-3.0-standalone.html)
 [![Crates.io](https://img.shields.io/crates/v/jellyfin-rpc-cli.svg)](https://crates.io/crates/jellyfin-rpc-cli)
-[![Downloads](https://shields.io/github/downloads/radiicall/jellyfin-rpc/total)](https://github.com/Radiicall/jellyfin-rpc/releases/latest)
-[![Visitors](https://visitor-badge.laobi.icu/badge?page_id=radiicall.jellyfin-rpc)](https://github.com/Radiicall/jellyfin-rpc)
+[![Downloads](https://shields.io/github/downloads/JustRadical/jellyfin-rpc/total)](https://github.com/JustRadical/jellyfin-rpc/releases/latest)
+[![Visitors](https://visitor-badge.laobi.icu/badge?page_id=JustRadical.jellyfin-rpc)](https://github.com/JustRadical/jellyfin-rpc)
 
-[Frequently Asked Questions](https://github.com/Radiicall/jellyfin-rpc/wiki/Frequently-Asked-Questions)
+[Frequently Asked Questions](https://github.com/JustRadical/jellyfin-rpc/wiki/Frequently-Asked-Questions)
 
 Program used to display what you're currently watching on discord.
 
@@ -12,45 +12,45 @@ Jellyfin-RPC uses the API to check what you're currently watching, this means th
 
 ## Install
 
-For installation instructions refer to the [Wiki](https://github.com/Radiicall/jellyfin-rpc/wiki/Installation)
+For installation instructions refer to the [Wiki](https://github.com/JustRadical/jellyfin-rpc/wiki/Installation)
 
 ## Setup
 
-For setup instructions refer to the [Wiki](https://github.com/Radiicall/jellyfin-rpc/wiki/Setup)
+For setup instructions refer to the [Wiki](https://github.com/JustRadical/jellyfin-rpc/wiki/Setup)
 
 
 ## Pictures of Jellyfin-RPC in action
 
 #### Movie
 
-![Jellyfin-RPC Displaying a Movie in Discord](https://github.com/Radiicall/jellyfin-rpc/assets/66682497/95530d9c-72c9-47c2-bd67-645e444bbe21)
+![Jellyfin-RPC Displaying a Movie in Discord](https://github.com/JustRadical/jellyfin-rpc/assets/66682497/95530d9c-72c9-47c2-bd67-645e444bbe21)
 
 #### Episode
 
-![Jellyfin-RPC Displaying a TV Show Episode in Discord](https://github.com/Radiicall/jellyfin-rpc/assets/66682497/0a552046-350b-415d-913a-8956723e5684)
+![Jellyfin-RPC Displaying a TV Show Episode in Discord](https://github.com/JustRadical/jellyfin-rpc/assets/66682497/0a552046-350b-415d-913a-8956723e5684)
 
 #### Music
 
-![Jellyfin-RPC Displaying a Song in Discord](https://github.com/Radiicall/jellyfin-rpc/assets/66682497/103b84af-a9c9-49e4-9a15-c5c47051a994)
+![Jellyfin-RPC Displaying a Song in Discord](https://github.com/JustRadical/jellyfin-rpc/assets/66682497/103b84af-a9c9-49e4-9a15-c5c47051a994)
 
 #### Live TV
 
-![Jellyfin-RPC Displaying a TV Channel in Discord](https://github.com/Radiicall/jellyfin-rpc/assets/66682497/1d9cf0af-96f2-438b-b147-904ab65bcc48)
+![Jellyfin-RPC Displaying a TV Channel in Discord](https://github.com/JustRadical/jellyfin-rpc/assets/66682497/1d9cf0af-96f2-438b-b147-904ab65bcc48)
 
 #### Book
 
-![Jellyfin-RPC Displaying a Book in Discord](https://github.com/Radiicall/jellyfin-rpc/assets/66682497/0a37013f-5fba-43fc-afa4-ba67baf2509d)
+![Jellyfin-RPC Displaying a Book in Discord](https://github.com/JustRadical/jellyfin-rpc/assets/66682497/0a37013f-5fba-43fc-afa4-ba67baf2509d)
 
 #### Audiobook
 
-![Jellyfin-RPC Displaying an Audiobook in Discord](https://github.com/Radiicall/jellyfin-rpc/assets/66682497/3a7845ae-0219-4932-a1a2-efb44f40a171)
+![Jellyfin-RPC Displaying an Audiobook in Discord](https://github.com/JustRadical/jellyfin-rpc/assets/66682497/3a7845ae-0219-4932-a1a2-efb44f40a171)
 
 #### Terminal
 
-![Image of terminal/cmd output](https://github.com/Radiicall/jellyfin-rpc/assets/66682497/4da2c59e-f6c7-49d8-89f6-b2704d9b66c3)
+![Image of terminal/cmd output](https://github.com/JustRadical/jellyfin-rpc/assets/66682497/4da2c59e-f6c7-49d8-89f6-b2704d9b66c3)
 
 </details>
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=radiicall/jellyfin-rpc&type=Date&theme=dark)](https://star-history.com/#radiicall/jellyfin-rpc&Date&theme=dark)
+[![Star History Chart](https://api.star-history.com/svg?repos=JustRadical/jellyfin-rpc&type=Date&theme=dark)](https://star-history.com/#JustRadical/jellyfin-rpc&Date&theme=dark)
