@@ -6,10 +6,11 @@ use std::io::{self, Write};
 /// parent directories as needed. Called either because no config exists yet
 /// or because the user passed `--configure`.
 pub fn run(path: &str) -> Result<(), Box<dyn std::error::Error>> {
-    println!("{}", "Welcome to Jellyfin-RPC!".bold());
+    println!("{}", "Welcome to Jellyfin-RPC!".cyan().bold());
     println!("Let's get you set up. This needs a few things from your Jellyfin server");
     println!("so it can figure out what you're watching and show it on Discord.\n");
 
+    println!("{}", "Server details".cyan().bold());
     let (url, api_key, username) = loop {
         let url = prompt_required("Jellyfin URL (e.g. https://jellyfin.example.com):");
         let api_key = prompt_required(
@@ -29,15 +30,16 @@ pub fn run(path: &str) -> Result<(), Box<dyn std::error::Error>> {
             }
             Err(reason) => {
                 println!("{}", "failed.".red());
-                eprintln!("  {reason}");
+                eprintln!("  {}", reason.red());
                 if prompt_yes_no("Save it anyway and sort it out later?", false) {
                     break (url, api_key, username);
                 }
-                println!("\nLet's try again.\n");
+                println!("\n{}\n", "Let's try again.".yellow());
             }
         }
     };
 
+    println!("\n{}", "Discord (optional)".cyan().bold());
     let discord_app_id = prompt_optional(
         "Custom Discord Application ID, only needed if you want your own bot identity\n\
          (leave blank to use Jellyfin-RPC's default app):",
@@ -110,7 +112,7 @@ fn prompt(question: &str) -> String {
     // this check a closed stdin makes prompt_required loop forever asking for input.
     match io::stdin().read_line(&mut input) {
         Ok(0) => {
-            eprintln!("\nNo input available, aborting setup.");
+            eprintln!("\n{}", "No input available, aborting setup.".red());
             std::process::exit(1);
         }
         _ => input.trim().to_string(),
@@ -123,7 +125,7 @@ fn prompt_required(question: &str) -> String {
         if !value.is_empty() {
             return value;
         }
-        println!("This one's required, try again.");
+        println!("{}", "This one's required, try again.".yellow());
     }
 }
 
