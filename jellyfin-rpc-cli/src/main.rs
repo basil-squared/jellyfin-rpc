@@ -8,6 +8,7 @@ use simple_logger::SimpleLogger;
 use std::{thread::sleep, time::Duration};
 use time::macros::format_description;
 mod config;
+mod setup;
 #[cfg(feature = "updates")]
 mod updates;
 
@@ -42,6 +43,8 @@ struct Args {
         default_value_t = String::from("info")
     )]
     log_level: String,
+    #[arg(long = "configure", help = "Run interactive setup, even if a config already exists")]
+    configure: bool,
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -68,6 +71,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let conf_path = &args
         .config
         .unwrap_or(get_config_path().expect("default config path couldn't be determined"));
+
+    if args.configure {
+        setup::run(conf_path)?;
+        return Ok(());
+    }
+
+    if !std::path::Path::new(conf_path).exists() {
+        info!("No config found at {}, starting first-run setup", conf_path);
+        setup::run(conf_path)?;
+    }
 
     let conf = match Config::builder().load(conf_path) {
         Ok(file) => file.build(),
