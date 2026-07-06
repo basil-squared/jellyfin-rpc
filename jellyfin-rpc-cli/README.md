@@ -29,6 +29,7 @@ For the full set of config options (blacklists, image display, custom Discord bu
 etc.) that the interactive setup doesn't ask about, or if you're setting this up
 non-interactively (no TTY, scripted deploy), copy [`example.json`](../example.json) to
 your config path by hand and edit it — see the [Wiki](https://github.com/JustRadical/jellyfin-rpc/wiki/Setup)
+(by the way, its an authentic emdash! i get paranoid about it so >:(  )
 for what every field does.
 
 
