@@ -4,6 +4,8 @@
 [![Downloads](https://shields.io/github/downloads/JustRadical/jellyfin-rpc/total)](https://github.com/JustRadical/jellyfin-rpc/releases/latest)
 [![Visitors](https://visitor-badge.laobi.icu/badge?page_id=radiicall.jellyfin-rpc)](https://github.com/JustRadical/jellyfin-rpc)
 
+This is a fork of [JustRadical/jellyfin-rpc](https://github.com/JustRadical/jellyfin-rpc).
+
 [Frequently Asked Questions](https://github.com/JustRadical/jellyfin-rpc/wiki/Frequently-Asked-Questions)
 
 Program used to display what you're currently watching on discord.
@@ -16,7 +18,18 @@ For installation instructions refer to the [Wiki](https://github.com/JustRadical
 
 ## Setup
 
-For setup instructions refer to the [Wiki](https://github.com/JustRadical/jellyfin-rpc/wiki/Setup)
+Just run it. If there's no config yet, Jellyfin-RPC walks you through an interactive
+first-run setup — it asks for your Jellyfin URL, API key, and username, checks them
+against your server before saving anything, and writes the config for you.
+
+Run with `--configure` any time you want to redo that (new server, rotated API key,
+whatever) without having to go find and delete the config file yourself.
+
+For the full set of config options (blacklists, image display, custom Discord buttons,
+etc.) that the interactive setup doesn't ask about, or if you're setting this up
+non-interactively (no TTY, scripted deploy), copy [`example.json`](../example.json) to
+your config path by hand and edit it — see the [Wiki](https://github.com/JustRadical/jellyfin-rpc/wiki/Setup)
+for what every field does.
 
 
 ## Pictures of Jellyfin-RPC in action
@@ -53,6 +66,10 @@ For setup instructions refer to the [Wiki](https://github.com/JustRadical/jellyf
 <img width="847" height="246" alt="Image of terminal/cmd output" src="https://github.com/user-attachments/assets/cc603d06-784b-4d4b-b35b-04af006775bd" />
 
 </details>
+
+## Credits
+
+Interactive first-run setup (`--configure`) by [basil-squared](https://github.com/basil-squared).
 
 ## Star History
 
