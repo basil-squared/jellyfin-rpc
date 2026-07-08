@@ -4,285 +4,141 @@ on:
   release:
     types: [published]
 
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.event.release.tag_name }}
+  cancel-in-progress: false
+
 jobs:
-  ubuntu:
-    runs-on: ubuntu-latest
+  build:
+    name: Build (${{ matrix.name }})
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: linux-x86_64
+            os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            bin: jellyfin-rpc
+            out: jellyfin-rpc-x86_64-linux
+            test: true
+
+          - name: linux-armv7
+            os: ubuntu-latest
+            target: armv7-unknown-linux-gnueabihf
+            bin: jellyfin-rpc
+            out: jellyfin-rpc-arm32-linux
+            test: false
+
+          - name: linux-aarch64
+            os: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+            bin: jellyfin-rpc
+            out: jellyfin-rpc-arm64-linux
+            test: false
+
+          - name: windows-x86_64
+            os: windows-latest
+            target: x86_64-pc-windows-msvc
+            bin: jellyfin-rpc.exe
+            out: jellyfin-rpc-x86_64-windows.exe
+            test: true
+
+          - name: macos-x86_64
+            os: macos-13
+            target: x86_64-apple-darwin
+            bin: jellyfin-rpc
+            out: jellyfin-rpc-x86_64-darwin
+            test: true
+
+          - name: macos-aarch64
+            os: macos-latest
+            target: aarch64-apple-darwin
+            bin: jellyfin-rpc
+            out: jellyfin-rpc-arm64-darwin
+            test: false
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install latest rust toolchain
-        uses: actions-rs/toolchain@v1
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: stable
-          default: true
-          override: true
+          targets: ${{ matrix.target }}
 
-      - name: Cache target folder
-        uses: actions/cache@v3
-        env:
-          cache-name: target-folder
-        with:
-          path: target
-          key: x86_64-linux-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            x86_64-linux-
-
-      - name: Build
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --workspace --locked --release
-
-      - name: Rename binary
-        run: mv target/release/jellyfin-rpc target/release/jellyfin-rpc-x86_64-linux
-
-      - name: Run cargo test
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --all-features --locked
-
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: |
-            target/release/jellyfin-rpc-x86_64-linux
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  ubuntu-arm32:
-    runs-on: ubuntu-latest
-  
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-  
-      - name: Install latest rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          target: armv7-unknown-linux-gnueabihf
-          default: true
-          override: true
-  
-      - name: Update apt and install ARM32 gcc
+      - name: Install Linux cross toolchains
+        if: runner.os == 'Linux' && (matrix.target == 'armv7-unknown-linux-gnueabihf' || matrix.target == 'aarch64-unknown-linux-gnu')
         run: |
           sudo apt-get update
-          sudo apt-get install -y gcc-arm-linux-gnueabihf
-    
-      - name: Cache target folder
-        uses: actions/cache@v3
-        env:
-          cache-name: target-folder
+          if [ "${{ matrix.target }}" = "armv7-unknown-linux-gnueabihf" ]; then
+            sudo apt-get install -y gcc-arm-linux-gnueabihf
+          else
+            sudo apt-get install -y gcc-aarch64-linux-gnu
+          fi
+
+      - name: Cache cargo registry + git + target
+        uses: actions/cache@v4
         with:
-          path: target
-          key: arm32-linux-${{ hashFiles('**/Cargo.lock') }}
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-${{ matrix.target }}-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
-            arm32-linux-
-  
-      - name: Build for ARM32 Linux
-        uses: actions-rs/cargo@v1
-        with:
-          use-cross: true
-          command: build
-          args: --target armv7-unknown-linux-gnueabihf --workspace --locked --release
-  
-      - name: Rename binary
-        run: mv target/armv7-unknown-linux-gnueabihf/release/jellyfin-rpc target/armv7-unknown-linux-gnueabihf/release/jellyfin-rpc-arm32-linux
-
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: |
-            target/armv7-unknown-linux-gnueabihf/release/jellyfin-rpc-arm32-linux
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  ubuntu-arm64:
-    runs-on: ubuntu-latest
-  
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-  
-      - name: Install latest rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          target: aarch64-unknown-linux-gnu
-          default: true
-          override: true
-  
-      - name: Update apt and install ARM64 gcc
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gcc-aarch64-linux-gnu
-    
-      - name: Cache target folder
-        uses: actions/cache@v3
-        env:
-          cache-name: target-folder
-        with:
-          path: target
-          key: arm64-linux-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            arm64-linux-
-  
-      - name: Build for ARM64 Linux
-        uses: actions-rs/cargo@v1
-        with:
-          use-cross: true
-          command: build
-          args: --target aarch64-unknown-linux-gnu --workspace --locked --release
-
-      - name: Rename binary
-        run: mv target/aarch64-unknown-linux-gnu/release/jellyfin-rpc target/aarch64-unknown-linux-gnu/release/jellyfin-rpc-arm64-linux  
-
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: |
-            target/aarch64-unknown-linux-gnu/release/jellyfin-rpc-arm64-linux
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  windows:
-    runs-on: windows-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install latest rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          default: true
-          override: true
-
-      - name: Cache target folder
-        uses: actions/cache@v3
-        env:
-          cache-name: target-folder
-        with:
-          path: target
-          key: x86_64-windows-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            x86_64-windows-
+            ${{ runner.os }}-${{ matrix.target }}-
+            ${{ runner.os }}-
 
       - name: Build
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --workspace --locked --release
+        run: cargo build --workspace --locked --release --target ${{ matrix.target }}
 
-      - name: Run cargo test
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --all-features --locked
+      - name: Run tests
+        if: matrix.test
+        run: cargo test --all-features --locked
 
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: target/release/jellyfin-rpc.exe
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Rename artifact (Unix)
+        if: runner.os != 'Windows'
+        run: mv target/${{ matrix.target }}/release/${{ matrix.bin }} target/${{ matrix.target }}/release/${{ matrix.out }}
 
-  macos-x86_64:
-    runs-on: macos-latest
+      - name: Rename artifact (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: Rename-Item "target/${{ matrix.target }}/release/${{ matrix.bin }}" "${{ matrix.out }}"
+
+      - name: Move Windows artifact into target tree
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: Move-Item "${{ matrix.out }}" "target/${{ matrix.target }}/release/${{ matrix.out }}"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.out }}
+          path: target/${{ matrix.target }}/release/${{ matrix.out }}
+          if-no-files-found: error
+
+  publish:
+    name: Upload assets to release
+    runs-on: ubuntu-latest
+    needs: build
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install latest rust toolchain
-        uses: actions-rs/toolchain@v1
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
         with:
-          toolchain: stable
-          target: x86_64-apple-darwin
-          default: true
-          override: true
+          path: dist
 
-      - name: Cache target folder
-        uses: actions/cache@v3
-        env:
-          cache-name: target-folder
+      - name: Show downloaded files
+        run: find dist -maxdepth 3 -type f -print
+
+      - name: Attach binaries to GitHub release
+        uses: softprops/action-gh-release@v2
         with:
-          path: target
-          key: x86_64-macos-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            x86_64-macos-
-
-      - name: Build for x86_64 macOS
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --target x86_64-apple-darwin --workspace --locked --release
-
-      - name: Rename binary
-        run: mv target/x86_64-apple-darwin/release/jellyfin-rpc target/x86_64-apple-darwin/release/jellyfin-rpc-x86_64-darwin
-
-      - name: Run cargo test
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --all-features --locked
-
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: |
-            target/x86_64-apple-darwin/release/jellyfin-rpc-x86_64-darwin
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  macos-arm64:
-    runs-on: macos-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install latest rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          target: aarch64-apple-darwin
-          default: true
-          override: true
-
-      - name: Cache target folder
-        uses: actions/cache@v3
-        env:
-          cache-name: target-folder
-        with:
-          path: target
-          key: arm64-macos-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            arm64-macos-
-
-      - name: Build for arm64 macOS
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --target aarch64-apple-darwin --workspace --locked --release
-
-      - name: Rename binary
-        run: mv target/aarch64-apple-darwin/release/jellyfin-rpc target/aarch64-apple-darwin/release/jellyfin-rpc-arm64-darwin
-
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: |
-            target/aarch64-apple-darwin/release/jellyfin-rpc-arm64-darwin
+          files: dist/**/*
+          fail_on_unmatched_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
